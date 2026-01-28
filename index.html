@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <title>Мастер CFO: Эфир</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- DESIGN SYSTEM: JONY IVE (FULL CONTENT EDITION) --- */
+        :root {
+            --bg-body: #000000;
+            --bg-surface: #111111;
+            --bg-glass: rgba(20, 20, 20, 0.7);
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #98989D;
+            --text-tertiary: #505055;
+
+            /* Accents */
+            --accent-green: #2DA44E; 
+            --accent-green-bright: #3FB950;
+            --accent-blue: #0A84FF;
+            --accent-orange: #FF9F0A;
+            --accent-red: #FF453A;
+            --accent-purple: #BF5AF2;
+
+            --radius-card: 24px;
+            --radius-btn: 14px;
+            --container: 1160px;
+            
+            --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* RESET */
+        *, *::before, *::after { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            padding-bottom: 120px;
+        }
+
+        /* LIVE BACKGROUND */
+        .bg-mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;
+            background: #020202; overflow: hidden; pointer-events: none;
+        }
+        .bg-orb {
+            position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15;
+        }
+        .orb-1 { top: -20%; left: 10%; width: 70vw; height: 70vw; background: radial-gradient(circle, #1a3c25, transparent); } 
+        .orb-2 { bottom: -10%; right: 0%; width: 60vw; height: 60vw; background: radial-gradient(circle, #0f1c30, transparent); }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; margin: 0; color: var(--text-primary); }
+        h1 { 
+            font-size: clamp(34px, 5vw, 60px); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px;
+        }
+        h2 { font-size: clamp(28px, 4vw, 42px); line-height: 1.2; margin-bottom: 40px; }
+        h3 { font-size: 20px; line-height: 1.3; }
+        p { color: var(--text-secondary); margin: 0; font-size: 16px; font-weight: 400; line-height: 1.6; }
+        .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+        
+        /* LAYOUT */
+        .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; position: relative; }
+        section { padding: 90px 0; }
+
+        /* SURFACES */
+        .surface {
+            background: var(--bg-surface);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: transform 0.3s var(--ease-apple);
+        }
+        .surface-glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-card);
+            padding: 32px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 16px 32px; border-radius: var(--radius-btn);
+            font-size: 16px; font-weight: 600; text-decoration: none;
+            transition: all 0.2s ease; cursor: pointer; border: none; 
+            color: #FFFFFF !important; -webkit-text-fill-color: #FFFFFF !important;
+        }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary {
+            background: var(--accent-green);
+            box-shadow: 0 4px 24px rgba(45, 164, 78, 0.25);
+        }
+        .btn-primary:hover { background: var(--accent-green-bright); }
+        
+        .btn-glass {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-glass:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(45, 164, 78, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(45, 164, 78, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(45, 164, 78, 0); }
+        }
+
+        /* HEADER */
+        .nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 72px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .nav-inner { width: 100%; max-width: var(--container); padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: -0.02em; }
+        .logo span { color: var(--accent-green-bright); }
+
+        /* CHIPS */
+        .chip {
+            padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 500;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+            white-space: nowrap; color: #fff;
+        }
+
+        /* --- DESKTOP LAYOUT --- */
+        
+        .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 80px; padding-bottom: 80px; }
+        .hero-layout {
+            display: grid; 
+            grid-template-columns: 550px 1fr; /* Fixed text width, fluid image */
+            gap: 60px; 
+            align-items: center;
+        }
+        .hero-img-wrap {
+            position: relative; border-radius: 24px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 30px 100px -20px rgba(0,0,0,0.8);
+        }
+        .hero-img { width: 100%; display: block; }
+
+        .speaker-layout {
+            display: grid;
+            grid-template-columns: 360px 1fr; /* Fixed photo */
+            gap: 60px;
+            align-items: start;
+        }
+        .speaker-img {
+            width: 100%; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
+            aspect-ratio: 3/4; object-fit: cover; object-position: top;
+        }
+
+        /* GRIDS */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+        /* SCROLL SNAP */
+        .scroll-x {
+            display: flex; gap: 20px; overflow-x: auto; 
+            padding-bottom: 24px; scrollbar-width: none;
+        }
+        .scroll-x::-webkit-scrollbar { display: none; }
+        .card-snap {
+            min-width: 320px; flex-shrink: 0;
+            background: var(--bg-surface); border-radius: 24px; padding: 32px;
+            border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column;
+        }
+
+        /* PRICING */
+        .price-card {
+            background: var(--bg-surface); border-radius: 32px; padding: 40px;
+            display: flex; flex-direction: column; height: 100%; position: relative;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .price-card.master {
+            background: #141814; border: 1px solid rgba(45, 164, 78, 0.3);
+            box-shadow: 0 0 80px rgba(45, 164, 78, 0.05);
+        }
+        .price-list { list-style: none; padding: 0; margin: 32px 0; flex-grow: 1; }
+        .price-list li { margin-bottom: 14px; padding-left: 30px; position: relative; color: var(--text-secondary); font-size: 15px; }
+        .price-list li::before {
+            content: ''; position: absolute; left: 0; top: 4px; width: 18px; height: 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232DA44E' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-size: contain; background-repeat: no-repeat;
+        }
+        .price-list li.off { opacity: 0.5; text-decoration: line-through; }
+        .price-list li.off::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF453A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E");
+        }
+
+        /* ACCORDIONS */
+        .acc-trigger {
+            width: 100%; text-align: left; padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 17px; font-weight: 600; color: #fff;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+        }
+        .acc-icon { font-size: 12px; transition: transform 0.3s; }
+        .acc-content { max-height: 0; overflow: hidden; transition: 0.3s ease; color: var(--text-secondary); }
+        .acc-content.open { padding-bottom: 24px; padding-top: 8px; }
+
+        /* RESPONSIVE */
+        .sticky-bar { display: none; }
+        
+        @media (max-width: 900px) {
+            .nav-cta { display: none; }
+            .sticky-bar { 
+                position: fixed; bottom: 20px; left: 16px; right: 16px;
+                background: rgba(20,20,20,0.9); backdrop-filter: blur(20px);
+                padding: 12px 20px; border-radius: 16px; z-index: 999;
+                display: flex; align-items: center; justify-content: space-between;
+                border: 1px solid rgba(255,255,255,0.1);
+                animation: slideUp 0.6s ease forwards;
+            }
+            @keyframes slideUp { from {transform: translateY(150%);} to {transform: translateY(0);} }
+
+            h1 { font-size: 32px; text-align: center; }
+            .hero { padding-top: 100px; height: auto; display: block; }
+            .hero-layout { display: flex; flex-direction: column; gap: 32px; }
+            .hero-text-wrap { display: flex; flex-direction: column; align-items: center; text-align: center; }
+            .hero-img-wrap { width: 100%; border-radius: 16px; margin: 0 -20px; width: calc(100% + 40px); border-radius: 0; border: none; }
+            
+            .speaker-layout { display: flex; flex-direction: column; gap: 32px; }
+            .speaker-img { width: 100%; max-width: 320px; margin: 0 auto; }
+            
+            .grid-2, .grid-3, .grid-4 { display: flex; flex-direction: column; gap: 16px; }
+            .audience-desktop { display: none !important; }
+            .audience-mobile { display: block !important; margin-top: 24px; text-align: center; }
+            
+            .price-card { padding: 24px; }
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-mesh">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+    </div>
+
+    <!-- Header -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="logo">МАСТЕР <span>CFO</span></div>
+            <a href="#pricing" class="btn btn-primary nav-cta" style="padding: 10px 24px; font-size: 14px;">Занять место</a>
+        </div>
+    </nav>
+
+    <!-- 1. HERO -->
+    <section class="hero">
+        <div class="container hero-layout">
+            <!-- Text Content -->
+            <div class="reveal hero-text-wrap">
+                <div style="font-family: 'JetBrains Mono'; font-size: 13px; color: var(--accent-green-bright); margin-bottom: 24px; display: inline-block; padding: 6px 12px; background: rgba(45, 164, 78, 0.15); border-radius: 8px;">21 января, 19:00 по Москве</div>
+                
+                <h1>Формулы, сводные таблицы, макросы и скрипты в Excel и Google-таблицах</h1>
+                
+                <h3 style="font-size: 20px; font-weight: 500; color: #fff; margin-bottom: 24px; line-height: 1.4; opacity: 0.9;">
+                    Живой практический эфир для финансистов, финансовых директоров, бухгалтеров и экономистов.
+                </h3>
+                
+                <p style="margin-bottom: 32px;">
+                    На реальных кейсах разберем формулы, сводные таблицы, макросы, скрипты и систему управленческого учета на таблицах. Покажем, где нейросети экономят время, а где ошибаются. Подойдет и новичкам, и профи.
+                </p>
+
+                <div style="margin-bottom: 32px; display: inline-flex; align-items: center; gap: 16px; background: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.2); padding: 12px 20px; border-radius: 12px;">
+                    <span style="font-size: 14px; color: #fff;">⚡️ 13 умных шаблонов бесплатно — только при регистрации в течение:</span>
+                    <span class="mono" style="color: var(--accent-orange); font-weight: 700; font-size: 16px;" id="timer">10:00</span>
+                </div>
+
+                <div>
+                    <a href="#pricing" class="btn btn-primary pulse">Зарегистрироваться + 13 шаблонов</a>
+                </div>
+            </div>
+
+            <!-- Image Content -->
+            <div class="reveal" style="transition-delay: 0.1s;">
+                <div class="hero-img-wrap">
+                    <img src="https://i.yapx.ru/cewKC.jpg" alt="Excel Dashboard" class="hero-img" loading="lazy">
+                </div>
+                
+                <!-- Mobile Audience -->
+                <div class="audience-mobile surface-glass" style="display:none;">
+                    <p style="font-size: 12px; text-transform: uppercase; margin-bottom: 12px; font-weight: 700;">Этот эфир вам нужен, если вы:</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                        <span class="chip">Финансовый директор</span><span class="chip">Фин. менеджер</span><span class="chip">Главбух</span><span class="chip">Бухгалтер</span><span class="chip">Аналитик</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. BONUSES -->
+    <section>
+        <div class="container reveal">
+            <div class="surface">
+                <h2 style="margin-bottom: 16px;">Бонус сразу после регистрации</h2>
+                <p style="margin-bottom: 32px; font-size: 18px;">13 умных шаблонов Google-таблиц (готовые рабочие файлы с логикой)</p>
+                
+                <!-- Marquee -->
+                <div style="overflow: hidden; white-space: nowrap; mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);">
+                    <div style="display: inline-flex; gap: 12px; animation: scroll 40s linear infinite;">
+                        <span class="chip" style="background: rgba(45, 164, 78, 0.2); border-color: rgba(45, 164, 78, 0.3);">Финансовая модель</span>
+                        <span class="chip" style="background: rgba(10, 132, 255, 0.2); border-color: rgba(10, 132, 255, 0.3);">Управление запасами</span>
+                        <span class="chip" style="background: rgba(191, 90, 242, 0.2); border-color: rgba(191, 90, 242, 0.3);">Учет сделок</span>
+                        <span class="chip" style="background: rgba(255, 159, 10, 0.2); border-color: rgba(255, 159, 10, 0.3);">Учет ДЗ и КЗ</span>
+                        <span class="chip">P&L Отчет</span><span class="chip">Cashflow</span><span class="chip">Управленческий баланс</span><span class="chip">Бюджет доходов и расходов</span><span class="chip">Зарплатная ведомость</span>
+                        <!-- Repeat -->
+                        <span class="chip">Финансовая модель</span><span class="chip">Управление запасами</span>
+                    </div>
+                </div>
+                <style>@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }</style>
+
+                <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.08);">
+                    <div class="acc-trigger" onclick="toggleAcc(this)">
+                        Показать полный список всех 13 шаблонов <span class="acc-icon">▼</span>
+                    </div>
+                    <div class="acc-content">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; padding-top: 16px;">
+                            <div>1. Финансовая модель</div><div>2. Управление запасами</div><div>3. Учет финансовой деятельности</div><div>4. Учет сделок</div><div>5. Учет ДЗ и КЗ по поставщикам</div><div>6. Учет основных средств</div><div>7. Отчет о движении денежных средств</div><div>8. Отчет о прибылях и убытках</div><div>9. Баланс (управленческий)</div><div>10. Бюджет доходов и расходов</div><div>11. Калькулятор себестоимости услуг</div><div>12. Калькулятор рентабельности проектов</div><div>13. Зарплатная ведомость</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audience Desktop -->
+            <div class="audience-desktop surface-glass reveal" style="margin-top: 40px;">
+                <h3 style="margin-bottom: 24px; font-size: 24px;">Этот эфир вам нужен, если вы:</h3>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <span class="chip">Финансовый директор</span>
+                    <span class="chip">Фин. менеджер</span>
+                    <span class="chip">Главбух</span>
+                    <span class="chip">Бухгалтер</span>
+                    <span class="chip">Аналитик</span>
+                    <span class="chip">Экономист</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. WHY TABLES -->
+    <section>
+        <div class="container reveal">
+            <h2>Зачем таблицы, если есть 1С</h2>
+            <p style="margin-bottom: 40px; max-width: 800px; font-size: 18px;">Таблицы не заменяют систему учета, но спасают, когда нужно быстро посчитать и принять решение</p>
+            <div class="grid-4">
+                <div class="surface"><p>Когда нужно проверить логику расчетов, найти несходимость или ошибку в данных.</p></div>
+                <div class="surface"><p>Когда нужно отработать процессы сбора данных перед автоматизацией.</p></div>
+                <div class="surface"><p>Когда важно привести данные к единому виду перед автоматизацией.</p></div>
+                <div class="surface"><p>Когда надо быстро собрать финансовую модель или отчет без ожидания программиста.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. AGENDA -->
+    <section>
+        <div class="container reveal">
+            <h2>Что будет на эфире</h2>
+            <p style="margin-bottom: 32px;">Листайте, чтобы увидеть полную программу</p>
+            
+            <div class="scroll-x">
+                <!-- 1 -->
+                <div class="card-snap">
+                    <div style="color: var(--accent-blue); margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 10.5M12 12 5.9 20.1M12 12l9.9 1.1"/></svg></div>
+                    <h4 style="margin-bottom: 12px; font-size: 20px;">Нейросети vs Люди</h4>
+                    <p>Почему нейросети не заменят финансиста и бухгалтера в расчетах и методологии.</p>
+                </div>
+                <!-- 2 -->
+                <div class="card-snap">
+                    <div style="color: var(--accent-purple); margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+                    <h4 style="margin-bottom: 12px; font-size: 20px;">Плоская таблица</h4>
+                    <p>Плоская таблица, как основа грамотной работы с таблицами.</p>
+                </div>
+                <!-- 3 -->
+                <div class="card-snap">
+                    <div style="color: var(--accent-green); margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></div>
+                    <h4 style="margin-bottom: 12px; font-size: 20px;">Умные формулы</h4>
+                    <p>Как писать формулы так, чтобы их можно было понять через год, а не переписывать с нуля.</p>
+                </div>
+                <!-- 4 -->
+                <div class="card-snap">
+                    <div style="color: var(--accent-red); margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                    <h4 style="margin-bottom: 12px; font-size: 20px;">AI для формул</h4>
+                    <p>Как использовать нейросети для формул и что обязательно проверять руками.</p>
+                </div>
+                <!-- 5 -->
+                <div class="card-snap">
+                    <div style="color: var(--accent-orange); margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+                    <h4 style="margin-bottom: 12px; font-size: 20px;">Сводные таблицы</h4>
+                    <p>Сводные таблицы и сборка отчетов из одной базы.</p>
+                </div>
+                <!-- 6 -->
+                <div class="card-snap">
+                    <div style="color: var(--accent-blue); margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                    <h4 style="margin-bottom: 12px; font-size: 20px;">Макросы и скрипты</h4>
+                    <p>Макросы и скрипты простыми словами. Когда они сильнее формул. Как писать макросы и скрипты при помощи нейросетей.</p>
+                </div>
+                <!-- 7 -->
+                <div class="card-snap">
+                    <div style="color: var(--accent-purple); margin-bottom: 20px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
+                    <h4 style="margin-bottom: 12px; font-size: 20px;">VBA vs GAS</h4>
+                    <p>Чем отличается макрос в Excel от Google Apps Script, и как нейросети помогают писать код под задачу.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. BONUSES STAY -->
+    <section>
+        <div class="container reveal">
+            <h2>Эти бонусы получают только те, кто будет с нами онлайн до завершения эфира</h2>
+            <div class="grid-3">
+                <div class="surface">
+                    <h3 style="font-size: 18px; margin-bottom: 12px;">Учебный кейс (практика)</h3>
+                    <p>Таблица с наполненными данными для тренировки формул и с правилами грамотного написания формул.</p>
+                </div>
+                <div class="surface">
+                    <h3 style="font-size: 18px; margin-bottom: 12px;">AI Промпты</h3>
+                    <p>Промпты для написания макросов и скриптов.</p>
+                </div>
+                <div class="surface">
+                    <h3 style="font-size: 18px; margin-bottom: 12px;">Видео-урок</h3>
+                    <p>Углубленный разбор сводных таблиц и разбор макросов и скриптов начального уровня.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. PRICING -->
+    <section id="pricing">
+        <div class="container reveal">
+            <h2 style="text-align: center;">Выберите формат участия</h2>
+            
+            <div class="grid-2">
+                <!-- Free -->
+                <div class="price-card">
+                    <h3 style="color: var(--text-secondary);">Тариф “Бесплатно и онлайн”</h3>
+                    <div class="mono" style="font-size: 32px; font-weight: 700; margin: 20px 0;">0 рублей</div>
+                    <ul class="price-list">
+                        <li>Живое участие в эфире</li>
+                        <li>Возможность задать вопросы спикеру</li>
+                        <li>Бонус за регистрацию: 13 шаблонов</li>
+                        <li>3 бонуса при участии до конца</li>
+                        <li class="off">Запись эфира</li>
+                        <li class="off">Презентация спикера</li>
+                        <li class="off">Чек-лист “10 самых важных функций”</li>
+                        <li class="off">Мини-курс по таблицам</li>
+                    </ul>
+                    <div style="margin-top: auto;">
+                        <div class="mono" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Всего 100 мест. Осталось <span id="spots-free">42</span> из 100.</div>
+                        <a href="#popup:free" class="btn btn-glass" style="width: 100%;">Занять место</a>
+                    </div>
+                </div>
+
+                <!-- Paid -->
+                <div class="price-card master">
+                    <h3 style="color: var(--accent-green-bright);">Тариф “Мастер таблиц”</h3>
+                    <div style="display: flex; gap: 12px; align-items: baseline; margin: 20px 0;">
+                        <span class="mono" style="font-size: 32px; font-weight: 700; color: #fff;">990 ₽</span>
+                        <span style="font-size: 20px; text-decoration: line-through; color: var(--text-tertiary);">9 900</span>
+                    </div>
+                    <ul class="price-list">
+                        <li>Живое участие в эфире</li>
+                        <li>Возможность задать вопросы спикеру</li>
+                        <li>Бонус за регистрацию: 13 шаблонов</li>
+                        <li>3 бонуса при участии до конца</li>
+                        <li style="color: #fff;"><b>Запись эфира</b></li>
+                        <li style="color: #fff;"><b>Презентация спикера</b></li>
+                        <li style="color: #fff;"><b>Чек-лист “10 самых важных функций”</b></li>
+                    </ul>
+                    
+                    <div style="background: rgba(45, 164, 78, 0.15); border: 1px solid rgba(45, 164, 78, 0.3); border-radius: 12px; padding: 0 16px; margin-bottom: 24px;">
+                        <div class="acc-trigger" style="border:none; padding: 16px 0; color: #fff;" onclick="toggleAcc(this)">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 10px; background: var(--accent-green); color: #000; padding: 3px 6px; border-radius: 4px; font-weight: 800;">СПЕЦБОНУС</span>
+                                <span>УНИКАЛЬНЫЙ СПЕЦБОНУС</span>
+                            </div>
+                            <span class="acc-icon">▼</span>
+                        </div>
+                        <div class="acc-content">
+                            <div style="padding-bottom: 12px; font-weight: 700; color: #fff;">+ Мини-курс по Google-таблицам (14 занятий):</div>
+                            <ul style="padding-left: 20px; list-style: none; margin: 0; padding-bottom: 16px;">
+                                <li>1. Вводный урок</li><li>2. Начало работы</li><li>3. Google-формы</li><li>4. Форматы данных</li><li>5. СУММЕСЛИ</li><li>6. ВПР</li><li>7. Сводные таблицы</li><li>8. UNIQUE</li><li>9. Нормализация данных</li><li>10. FILTER</li><li>11. ИНДЕКС и ПОИСКПОЗ</li><li>12. ARRAYFORMULA</li><li>13. Условное форматирование</li><li>14. Визуализация: графики</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: auto;">
+                        <div class="mono" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Всего 100 мест. Осталось <span id="spots-paid">18</span> из 100.</div>
+                        <a href="#popup:paid" class="btn btn-primary" style="width: 100%;">Купить доступ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. STATS -->
+    <section>
+        <div class="container reveal">
+            <h2 style="text-align: center;">Мастер CFO в цифрах</h2>
+            <div class="grid-3">
+                <div class="surface" style="text-align: center;">
+                    <div class="mono" style="font-size: 32px; color: var(--accent-blue); margin-bottom: 8px;">50 000</div>
+                    <p>человек в двух Telegram-каналах</p>
+                </div>
+                <div class="surface" style="text-align: center;">
+                    <div class="mono" style="font-size: 32px; color: var(--accent-blue); margin-bottom: 8px;">600</div>
+                    <p>человек прошли программу “Финансовый директор: базовый уровень”</p>
+                </div>
+                <div class="surface" style="text-align: center;">
+                    <div class="mono" style="font-size: 32px; color: var(--accent-blue); margin-bottom: 8px;">570</div>
+                    <p>участников в клубе “Финансист PRO”</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. REVIEWS -->
+    <section>
+        <div class="container reveal">
+            <h2 style="text-align: center;">Отзывы участников</h2>
+            <div class="scroll-x">
+                <img src="https://i.yapx.ru/cer4M.jpg" style="height: 350px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);" alt="R1" loading="lazy">
+                <img src="https://i.yapx.ru/cer4k.jpg" style="height: 350px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);" alt="R2" loading="lazy">
+                <img src="https://i.yapx.ru/cer5A.jpg" style="height: 350px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);" alt="R3" loading="lazy">
+                <img src="https://i.yapx.ru/cer6D.jpg" style="height: 350px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);" alt="R4" loading="lazy">
+                <img src="https://i.yapx.ru/cer6g.jpg" style="height: 350px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);" alt="R5" loading="lazy">
+            </div>
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="https://t.me/findirotziv" target="_blank" class="btn btn-glass">Смотреть все отзывы</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. SPEAKER (Fixed Layout) -->
+    <section>
+        <div class="container reveal">
+            <div class="speaker-layout">
+                <img src="https://i.yapx.ru/ceoz7.jpg" class="speaker-img" alt="Speaker" loading="lazy">
+                <div>
+                    <h2 style="margin-bottom: 12px;">Софья Бурцева</h2>
+                    <p class="mono" style="color: var(--accent-green); margin-bottom: 24px;">Финансовый директор, опыт 15+ лет</p>
+                    <ul class="price-list" style="margin-bottom: 24px;">
+                        <li>250+ компаний: внедрение и автоматизация финансового учета вместе с командой.</li>
+                        <li>Практика автоматизации управленческого учета на разных системах: 1С, Power BI, сервисы финучета и самописные решения.</li>
+                        <li>Создала FinAILab: инструмент с ИИ для финансового анализа, выводов и графиков.</li>
+                        <li>За последний год выступала более 10 раз на офлайн-конференциях, включая Сколково, Актион и Финтабло.</li>
+                    </ul>
+                    <div class="surface-glass" style="padding: 24px; border-left: 2px solid var(--accent-green); background: rgba(45, 164, 78, 0.1);">
+                        <p style="color: #fff;">На эфире будет разбор на примерах и демонстрации на файле, без теории ради теории.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. FAQ -->
+    <section>
+        <div class="container reveal">
+            <h2 style="text-align: center;">Частые вопросы</h2>
+            <div class="surface">
+                <div class="acc-trigger" onclick="toggleAcc(this)">Это эфир для новичков или для тех, кто уже уверенно работает в таблицах <span class="acc-icon">▼</span></div>
+                <div class="acc-content">Подойдет обоим уровням. Новичкам даст понятную структуру и базовую логику. Тем, кто уже уверенно работает, поможет систематизировать подход, увидеть типовые ошибки и ускорить работу через сводные, макросы, скрипты и нейросети.</div>
+                
+                <div class="acc-trigger" onclick="toggleAcc(this)">Мы работаем в Google-таблицах или в Excel <span class="acc-icon">▼</span></div>
+                <div class="acc-content">И там, и там. Принципы одни, инструменты похожи. На эфире разберем оба варианта.</div>
+                
+                <div class="acc-trigger" onclick="toggleAcc(this)">Когда придут 13 шаблонов <span class="acc-icon">▼</span></div>
+                <div class="acc-content">Сразу после регистрации. На странице “Спасибо” будет ссылка на скачивание и инструкция.</div>
+                
+                <div class="acc-trigger" onclick="toggleAcc(this)">Как получить 3 бонуса за участие до конца <span class="acc-icon">▼</span></div>
+                <div class="acc-content">Нужно быть онлайн до завершения эфира. Бонусы выдаются только тем, кто досидел до конца.</div>
+                
+                <div class="acc-trigger" onclick="toggleAcc(this)">Будет ли запись <span class="acc-icon">▼</span></div>
+                <div class="acc-content">Запись входит в тариф “Мастер таблиц”. В тарифе “Бесплатно и онлайн” записи нет.</div>
+                
+                <div class="acc-trigger" onclick="toggleAcc(this)">На эфире будет продажа <span class="acc-icon">▼</span></div>
+                <div class="acc-content">Да. В конце эфира будет короткая презентация программы “Финансовый директор: базовый уровень”. Мы предупреждаем об этом заранее. Основная часть эфира будет практической.</div>
+
+                <div class="acc-trigger" onclick="toggleAcc(this)">Что если я не смогу быть онлайн 21 января <span class="acc-icon">▼</span></div>
+                <div class="acc-content">Выбирайте тариф “Мастер таблиц”. Там будет запись эфира, материалы и мини-курс.</div>
+
+                <div class="acc-trigger" onclick="toggleAcc(this)">Почему мест всего 100 и 100 <span class="acc-icon">▼</span></div>
+                <div class="acc-content">Мы ограничиваем количество участников, чтобы выдержать формат эфира и вопросов, и корректно выдать бонусы.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. IMPORTANT -->
+    <section style="padding-top: 0;">
+        <div class="container reveal">
+            <div class="surface" style="border-left: 4px solid var(--accent-green);">
+                <h3>Важно заранее</h3>
+                <p style="margin-top: 12px; font-size: 18px;">В конце эфира мы коротко покажем программу курса <a href="https://fin-academy.pro/findir" style="color: var(--accent-green); text-decoration: underline;">“Финансовый директор: базовый уровень”</a>. Это не скрытая “продажа из-под полы”. Основная часть эфира будет контентной и практической.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. HELP -->
+    <section style="padding: 0; padding-bottom: 120px;">
+        <div class="container reveal">
+            <div class="surface-glass" style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 24px;">
+                     <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 24px;">?</div>
+                     <div>
+                        <h3 style="font-size: 20px; margin-bottom: 8px;">У вас остались вопросы или сомнения?</h3>
+                        <p>Может есть какая-то проблема и не получается зарегистрироваться?</p>
+                     </div>
+                </div>
+                <a href="https://t.me/sofaburtceva" target="_blank" class="btn btn-glass">Написать в Telegram</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FRIENDLY MOBILE STICKY BAR -->
+    <div class="sticky-bar">
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 13px; color: var(--text-secondary);">Мастер CFO</span>
+            <span style="font-size: 15px; font-weight: 600; color: #fff;">Живой эфир + Бонусы</span>
+        </div>
+        <a href="#pricing" class="btn btn-primary" style="padding: 10px 20px; font-size: 14px; border-radius: 99px;">Занять место</a>
+    </div>
+
+    <script defer>
+        // Reveal Logic
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Accordion Logic (FIXED)
+        window.toggleAcc = (el) => {
+            const content = el.nextElementSibling;
+            const icon = el.querySelector('.acc-icon');
+            el.classList.toggle('active');
+            content.classList.toggle('open');
+            
+            if(content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + "px";
+                if(icon) icon.style.transform = "rotate(180deg)";
+            } else {
+                content.style.maxHeight = null;
+                if(icon) icon.style.transform = "rotate(0deg)";
+            }
+        };
+
+        // Timer
+        const timerEl = document.getElementById('timer');
+        let endTime = localStorage.getItem('apple_timer') || (Date.now() + 10 * 60 * 1000);
+        localStorage.setItem('apple_timer', endTime);
+        
+        setInterval(() => {
+            const diff = endTime - Date.now();
+            if(diff <= 0) return timerEl.innerText = "00:00";
+            const m = Math.floor(diff / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            timerEl.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }, 1000);
+
+        // Spots
+        const updateSpots = () => {
+             const free = document.getElementById('spots-free');
+             const paid = document.getElementById('spots-paid');
+             if(free && Math.random() > 0.5) free.innerText = Math.max(0, parseInt(free.innerText) - 1);
+             if(paid && Math.random() > 0.7) paid.innerText = Math.max(0, parseInt(paid.innerText) - 1);
+             setTimeout(updateSpots, Math.random() * 8000 + 4000);
+        };
+        setTimeout(updateSpots, 5000);
+    </script>
+</body>
+</html>
